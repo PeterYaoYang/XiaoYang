@@ -1,0 +1,72 @@
+#include<iostream>
+#include<string>
+class Pat
+{
+public:
+	Pat(std::string theName);
+	static int getCount();
+
+protected:
+	std::string name;
+
+private:
+	static int count;
+};
+
+
+
+class Dog :public Pat
+{
+public:
+
+	Dog(std::string theName);
+};
+
+class Cat :public Pat
+{
+public:
+
+	Cat(std::string theName);
+};
+
+int count = 0;
+
+Pat::Pat(std::string theName)
+{
+	name = theName;
+	count++;
+	std::cout << "一直宠物出生了" << name << std::endl;
+}
+
+int Pat::getCount()
+{
+	return count;
+}
+
+Dog::Dog(std::string theName) :Pat(theName)
+{
+
+}
+
+Cat::Cat(std::string theName) : Pat(theName)
+{
+
+}
+
+int main()
+{
+	Dog dog("tom");
+	Cat cat("jeoor");
+
+	std::cout << "\n已经诞生了\n" << Pat::getCount() << std::endl;
+	{
+		Dog dog_2("tom2");
+		Cat cat_2("jeoor2");
+
+		std::cout << "\n现在呢，已经诞生了" << Pat::getCount() << "只宠物\n\n";
+
+	}
+	std::cout << "\nand you`er back to\n" << Pat::getCount() << "Pets\n\n";
+}
+
+
