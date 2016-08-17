@@ -1,0 +1,39 @@
+#include<iostream>
+#include<fstream>
+#include<Windows.h>
+
+using namespace std;
+
+int main2()
+{
+	char *path = "c:\\123.txt";
+	ofstream fout(path);
+	char x;
+	if (fout)
+	{
+		for (int i = 0;i < 10;i++)
+		{
+			cin >> x;
+			fout << x;
+		}
+		fout.close();
+	}
+
+	cin.get();
+	return 0;
+}
+
+int main()
+{
+	std::cout << "\n正在输出记录数据...... ";
+	for (int i = 0; i <= 100; i++)      // 打印百分比 
+	{
+		std::cout.width(3);
+		std::cout << i << "%";
+		Sleep(50);
+		std::cout << "\b\b\b\b";
+	}
+    std::cout << "\n\n";
+std::cin.get();
+return 0;
+}
