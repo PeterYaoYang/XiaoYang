@@ -1,0 +1,185 @@
+#include"stdio.h"
+#include<malloc.h>
+
+typedef char ElemType;
+
+typedef struct LNode
+{
+	ElemType data;
+	struct LNode *next;
+}LinkList;
+
+void CreatListF(LinkList *&L, ElemType a[], int n)  //头插法建表
+{
+	LinkList *s;int i;
+	L = (LinkList *)malloc(sizeof(LinkList));
+	
+    L->next = NULL;
+
+	for (i = 0;i<n;i++)
+	{
+		s = (LinkList *)malloc(sizeof(LinkList));
+		s->data = a[i];
+		s->next = L->next;
+		L->next = s;
+	}
+}
+
+void CreateListR(LinkList *&L, ElemType a[], int n)   //尾插法建表
+{
+	LinkList *s, *r;int i;
+	L = (LinkList *)malloc(sizeof(LinkList));
+	r = L;
+	for (i = 0;i<n;i++)
+	{
+		s = (LinkList *)malloc(sizeof(LinkList));
+		s->data = a[i];
+		r->next = s;
+		r = s;
+	}
+	r->next = NULL;
+}
+
+void InitList(LinkList *&L)    //初始化线性表
+{
+	L = (LinkList *)malloc(sizeof(LinkList));
+	L->next = NULL;
+}
+
+void DestroyList(LinkList *&L)     //销毁线性表
+{
+	LinkList *p = L, *q = p->next;
+	while (q != NULL)
+	{
+		free(p);
+		p = q;
+		q = p->next;
+	}
+	free(p);
+}
+
+int ListEmpty(LinkList *L)    //判断线性表是否为空
+{
+	return(L->next == NULL);
+}
+
+int ListLength(LinkList *L)    //求线性表的长度
+{
+	LinkList *p = L;int n = 0;
+	while (p->next != NULL)
+	{
+		n++;p = p->next;
+	}
+	return(n);
+}
+
+void DispList(LinkList *L)   //输出线性表
+{
+	LinkList *p = L->next;
+	while (p != NULL)
+	{
+		printf("%c", p->data);
+		p = p->next;
+	}
+}
+
+int GetElem(LinkList *L, int i, ElemType &e)   //求线性表中某个数据元素值
+{
+	int j = 0;
+	LinkList *p = L;
+	while (j<i&&p != NULL)
+	{
+		j++;p = p->next;
+	}
+	if (p == NULL)
+		return 0;
+	else
+	{
+		e = p->data;return 1;
+	}
+}
+
+int LocateElem(LinkList *L, ElemType e)    //按元素值查找
+{
+	LinkList *p = L->next;
+	int i = 1;
+	while (p != NULL&&p->data != e)
+	{
+		p = p->next;i++;
+	}
+	if (p == NULL)return(0);
+	else return(i);
+}
+
+int ListInsert(LinkList *&L, int i, ElemType e)   //插入数据元素
+{
+	int j = 0;
+	LinkList *p = L, *s;
+	while (j<i - 1 && p != NULL)
+	{
+		j++;p = p->next;
+	}
+	if (p == NULL)return 0;
+	else
+	{
+		s = (LinkList *)malloc(sizeof(LinkList));
+		s->data = e; s->next = p->next; p->next = s;
+		return 1;
+	}
+}
+
+int ListDelete(LinkList *&L, int i, ElemType &e)  //删除数据元素
+{
+	int j = 0;
+	LinkList *p = L, *q;
+	while (j<i - 1 && p != NULL)
+	{
+		j++;p = p->next;
+	}
+	if (p == NULL)
+		return 0;
+	else
+	{
+		q = p->next;
+		if (q == NULL)return 0;
+		e = q->data;
+		p->next = q->next;
+		free(q);
+		return 1;
+	}
+}
+
+int main()
+{
+	ElemType e, a[5] = { 'a','b','c','d','e' };
+	LinkList *h;
+
+	InitList(h);                                //初始化顺序表h
+	CreateListR(h, &a[0], 5);                     //依次采用尾插入法插入a，b，c，d，e元素
+	printf("单链表为：");
+	DispList(h);  printf("\n");                 //输出顺序表h
+
+	printf("该单链表的长度为：");
+	printf("%d", ListLength(h)); printf("\n");   //输出顺序表h的长度
+	if (ListEmpty(h)) printf("该单链表为空。\n");
+	else printf("该单链表不为空。\n");          //判断顺序表h是否为空
+
+	GetElem(h, 15, e);printf("该单链表的第3个元素为：");
+	printf("%c", e); printf("\n");               //输出顺序表h的第3个元素
+	printf("该单链表中a的位置为：");
+	printf("%d", LocateElem(h, 'a')); printf("\n");  //输出元素'a'的位置
+
+	ListInsert(h, 4, 'f');                        //在第4个元素位置插入'f'素
+	printf("在第4 个元素位置上插入'f'后单链表为：");
+	DispList(h); printf("\n");               //输出顺序表h
+
+	ListDelete(h, 3, e);                           //删除L的第3个元素
+	printf("删除第3个元素后单链表为：");
+	DispList(h); printf("\n");               //输出顺序表h
+
+	DestroyList(h);//释放顺序表h
+
+
+	getchar();
+	return 0;
+}
