@@ -1,0 +1,354 @@
+//commin.h文件
+#pragma once
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+#include<time.h>
+#include<windows.h>
+
+#define U 1   //上
+#define D 2   //下
+#define L 3   //左
+#define R 4   //右
+
+void Show();            //光标
+void Map();             //界面
+void InitSnake();       //蛇身
+int biteself();         //判断
+void cantcrosswall();   //撞墙
+int creatrfood();       //食物
+void move();            //蛇前进
+void game();            //控制
+void pause();           //暂停
+void endgame();         //结束游戏
+
+
+//snake.c文件
+#include"commin.h"
+typedef struct Snake
+{
+	int x;
+	int y;
+	struct Snake *next;
+}snake;
+int sum = 0, one = 1;//总分 食物得分
+int status, sleeptime = 100;
+snake *head, *food;   //蛇头 食物 全局变量 
+int endgamestatus = 0;     
+
+void Show(int x, int y)
+{
+	COORD Cell;
+	Cell.X = x;
+	Cell.Y = y;
+	HANDLE SNAKE = GetStdHandle(STD_ERROR_HANDLE);
+	SetConsoleCursorPosition(SNAKE, Cell);
+}
+
+void Map()
+{
+	
+	for (int i = 0;i <= 100;i += 2) {
+		Show(i, 0);
+		printf("→");
+		Show(i, 50);
+		printf("←");
+	}
+	for (int i = 1;i <= 50;i++) {
+		Show(0, i);
+		printf("↑");
+		Show(100, i);
+		printf("↓");
+	}
+}
+
+void InitSnake()             
+{
+	snake *body;
+	body = (snake *)malloc(sizeof(snake));
+	body->x = 40;
+	body->y = 10;
+	body->next = NULL;
+	for (int i = 1;i < 4;i++) {
+	    head = (snake *)malloc(sizeof(snake));
+		head->next = body;
+		head->x = 40+2*i;
+		head->y = 10;
+		body=head;
+	}
+	while (body != NULL) {
+		Show(body->x, body->y);    //初始化蛇位置;
+		printf("■");
+		body = body->next;         //指向下一个节点;
+	}
+}
+
+int biteself()
+{
+	snake *self;
+	self = head->next;
+	while (self != NULL) {
+		if (self->x == head->x&&self->y == head->y)      //判断是否咬到自己
+		{
+			return 1;
+		}
+		self = self->next;
+	}
+
+	return 0;
+}
+
+void cantcrosswall()
+{
+	if (head->x == 0 || head->x == 100 || head->y == 0 || head->y == 50)
+	{
+		endgamestatus = 1;
+		endgame();
+	}
+}
+
+int creatrfood()
+{
+	snake *q;
+	srand((unsigned)time(NULL));
+	food = (snake *)malloc(sizeof(snake));
+	while ((food->x % 2) != 0) {
+		food->x = rand()%92+ 2;
+	}
+	food->y = rand() %48+ 1;
+
+	q = head;
+	while (q->next == NULL) {
+		if (q->x = food->x && q->y == food->y) {
+			free(food);
+			creatrfood();     //调用自身遍历;
+		}
+		q = q->next; 
+	}
+	Show(food->x, food->y);
+	printf("■");
+}
+void move()
+{
+	snake *hand,*q;
+	cantcrosswall();
+	hand = (snake *)malloc(sizeof(snake));
+	if (status == U)
+	{
+		hand->x = head->x;
+		hand->y = head->y-1;
+		if (hand->x == food->x&&hand->y == food->y) {
+			hand->next = head;
+			head = hand;
+			q = hand;
+			while (q != NULL) {
+				Show(q->x, q->y);
+				printf("■");
+				q = q->next;
+			}
+			sum = sum + one;
+			creatrfood();
+		}
+		else
+		{
+			hand->next = head;
+			head = hand;
+			q = head;
+			while (q->next->next != NULL) {
+				Show(q->x, q->y);
+				printf("■");
+				q = q->next;
+			}
+			Show(q->next->x, q->next->y);
+			printf(" ");
+			free(q->next);
+			q->next = NULL;
+		}
+	}
+
+	if (status == D)
+	{
+		hand->x = head->x;
+		hand->y = head->y+1;
+		if (hand->x == food->x&&hand->y == food->y) {
+			hand->next = head;
+			head = hand;
+			q = hand;
+			while (q != NULL) {
+				Show(q->x, q->y);
+				printf("■");
+				q = q->next;
+			}
+			sum = sum + one;
+			creatrfood();
+		}
+		else
+		{
+			hand->next = head;
+			head = hand;
+			q = head;
+			while (q->next->next != NULL) {
+				Show(q->x, q->y);
+				printf("■");
+				q = q->next;
+			}
+			Show(q->next->x, q->next->y);
+			printf(" ");
+			free(q->next);
+			q->next = NULL;
+		}
+	}
+	if (status == L)
+	{
+		hand->x = head->x-2;
+		hand->y = head->y;
+		if (hand->x == food->x&&hand->y == food->y) {
+			hand->next = head;
+			head = hand;
+			q = hand;
+			while (q != NULL) {
+				Show(q->x, q->y);
+				printf("■");
+				q = q->next;
+			}
+			sum = sum + one;
+			creatrfood();
+		}
+		else
+		{
+			hand->next = head;
+			head = hand;
+			q = head;
+			while (q->next->next != NULL) {
+				Show(q->x, q->y);
+				printf("■");
+				q = q->next;
+			}
+			Show(q->next->x, q->next->y);
+			printf(" ");
+			free(q->next);
+			q->next = NULL;
+		}
+	}
+	if (status == R)
+	{
+		hand->x = head->x+2;
+		hand->y = head->y;
+		if (hand->x == food->x&&hand->y == food->y) {
+			hand->next = head;
+			head = hand;
+			q = hand;
+			while (q != NULL) {
+				Show(q->x, q->y);
+				printf("■");
+				q = q->next;
+			}
+			sum = sum + one;
+			creatrfood();
+		}
+		else
+		{
+			hand->next = head;
+			head = hand;
+			q = head;
+			while (q->next->next != NULL) {
+				Show(q->x, q->y);
+				printf("■");
+				q = q->next;
+			}
+			Show(q->next->x, q->next->y);
+			printf(" ");
+			free(q->next);
+			q->next = NULL;
+		}
+	}
+	if (biteself() == 1)
+	{
+		endgamestatus = 2;
+		endgame();
+	}
+}
+
+void pause()
+{
+	while (1)
+	{
+		Sleep(300);
+		if (GetAsyncKeyState(VK_SPACE))  //调用API函数 
+		{
+			break;
+		}
+	}
+}
+
+
+void game()
+{
+	while (1) {
+		Show(110, 25);
+		printf("总%d分", sum);
+		if (GetAsyncKeyState(VK_UP) && status!= D) {
+			status = U;
+		}
+
+		else if (GetAsyncKeyState(VK_DOWN) && status != U){ 
+			status = D;
+		}
+		else if (GetAsyncKeyState(VK_LEFT) && status != R) {
+			status = L;
+		}
+		else if (GetAsyncKeyState(VK_RIGHT) && status != L) {
+			status = R;
+		}
+		else if (GetAsyncKeyState(VK_SPACE)) {
+			pause();
+		}
+		else if (GetAsyncKeyState(VK_ESCAPE)) {
+			endgamestatus = 3;
+			break;
+		}
+		Sleep(sleeptime);
+		move();
+	}
+}
+void endgame()
+
+{
+	system("cls");
+	Show(40, 15);
+	if (endgamestatus == 1)
+	{
+		printf("哦不，撞墙了！");
+	}
+	else if (endgamestatus == 2)
+	{
+		printf("不小心咬到自己了！");
+	}
+	else if (endgamestatus == 3)
+	{
+		printf("您的已经结束了游戏");
+	}
+	Show(43, 20);
+	printf("最后得分:%d分", sum);
+	system("pause");
+	exit(0);
+}
+
+
+// main.c主函数文件
+
+#include"commin.h"
+
+int main()
+{
+	system("title snake--贪吃蛇  计算机软件2班__姚洋制作");
+	system("mode con cols=120 lines=60");
+	system("color B9");
+
+	Map();
+	InitSnake();
+	creatrfood();
+	game();
+	endgame();
+	return 0;
+}
