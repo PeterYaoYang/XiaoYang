@@ -1,0 +1,353 @@
+#include <stdio.h> 
+#include <stdlib.h> 
+#include <string.h>
+typedef struct student
+{
+	char name[10];
+	long number;
+	char sex[2];
+	int math;
+	int eglish;
+	int clanguge;
+	int average;
+}student;
+typedef struct Y
+{
+	student date;
+	struct Y *next;
+}Y;
+Y* build()//建立链表并返回指针 
+{
+	Y *p;
+	if ((p = (Y*)malloc(sizeof(Y))) == NULL)
+	{
+		printf("=>ゃゃゃゃゃ初始化失败ゃゃゃゃゃ");
+		return 0;
+	}
+	else {
+		p->next = NULL;
+		p->date.number = 0;//头结点存放学生人数   
+		printf("ゃゃゃゃゃゃゃゃゃゃゃゃゃゃゃゃゃゃゃゃゃゃ\n");
+		printf("ゃゃゃゃゃゃゃゃゃ初始化成功ゃゃゃゃゃゃゃゃ\n");
+		printf("ゃゃゃゃゃゃゃゃゃゃゃゃゃゃゃゃゃゃゃゃゃゃ\n");
+		printf("ゃゃゃゃゃゃゃ请对新系统进行操作ゃゃゃゃゃゃ\n");
+		return p;
+	}
+}
+void add(Y *head)//增加学生信息 
+{
+	Y *p, *q;
+	int n = 0;
+	long long m;
+	q = head->next;
+	p = (Y*)malloc(sizeof(Y));
+	printf("=>请输入新生姓名：\n");
+	gets(p->date.name);
+	//scanf("%s", p->date.name);
+	fflush(stdin);
+	printf("=>请输入学号：\n");
+	while (n == 0) {
+		scanf("%ld", &m);fflush(stdin);
+		if (q == NULL) n = 1;
+		while (q) {
+			if (q->date.number == m) {
+				printf("=>你输入的学号与已有同学的学号相同，请重新输入：\n");
+				q = head->next;
+				break;
+			}
+			else {
+				q = q->next;
+				if (q == NULL) n = 1;
+			}
+		}
+	}
+	p->date.number = m;
+	printf("=>请输入性别:\n");
+	gets(p->date.sex);fflush(stdin);
+	printf("=>请输入c语言成绩:\n");
+	scanf("%d", &m);fflush(stdin);
+	p->date.math = m;
+	printf("=>请输入英语成绩:\n");
+	scanf("%d", &m);fflush(stdin);
+	p->date.eglish = m;
+	printf("=>请输入高数成绩:\n");
+	scanf("%d", &m);fflush(stdin);
+	p->date.clanguge = m;
+	p->date.average = (p->date.math + p->date.eglish + p->date.clanguge);
+	q = head->next;
+	head->next = p;
+	p->next = q;
+	head->date.number++;
+}
+void deletion(Y *head)//删除学生信息 
+{
+	Y *p = head->next, *q = head;
+	char N[10];
+	printf("=>请输入你想删除的学生姓名:\n");
+	gets(N);fflush(stdin);
+	if (p == NULL)
+		printf("=>ゃゃゃ系统无学生可删除ゃゃゃ\n");
+	while (p) {
+		if (strcmp(p->date.name, N) == 0) {
+			q->next = p->next;
+			head->date.number--;
+			printf("=>ゃゃゃ删除%s成功ゃゃゃ\n", p->date.name);
+			free(p);
+			break;
+		}
+		else {
+			p = p->next;
+			q = q->next;
+			if (p == NULL)
+				printf("=>你要删除的学生不存在,删除失败！\n");
+		}
+	}
+}
+int display(Y *head)//显示学生信息 
+{
+	Y *p = head->next;
+	int m, n = 0;
+	char N[10];
+	if (p == NULL) {
+		printf("=>ゃゃゃ系统无学生ゃゃゃ\n");
+		return 0;
+	}
+	while (n == 0) {
+		printf("ゃゃゃゃゃゃゃゃゃゃゃゃゃゃゃゃゃゃゃゃゃゃ\n");
+		printf("ゃEric          1 显示所有信息        Ericゃ\n");
+		printf("ゃEric          2 按姓名查找          Ericゃ\n");
+		printf("ゃEric          3 按学号查找          Ericゃ\n");
+		printf("ゃEric          4 返回主菜单          Ericゃ\n");
+		printf("ゃゃゃゃゃゃゃゃゃゃゃゃゃゃゃゃゃゃゃゃゃゃ\n");
+		printf("=>请选择你的操作:\n");
+		scanf("%d", &m);
+		fflush(stdin);
+		switch (m) {
+		case 1:printf("\n=>该系统拥有%d名学生：\n\n", head->date.number);
+			p = head->next;
+			printf("\t姓名\t学号\t性别\tc语言\t英语\t高数\t总分\n");
+			while (p) {
+				printf("\t%s\t%ld\t%s\t%d\t%d\t%d\t%d\n", p->date.name, p->date.number, p->date.sex, p->date.math,
+					p->date.eglish, p->date.clanguge, p->date.average);
+				p = p->next;
+			}
+			break;
+		case 2:printf("=>请输入查找姓名:\n");
+			gets(N);
+			fflush(stdin);
+			p = head->next;
+			while (p) {
+				if (strcmp(p->date.name, N) == 0) {
+					printf("\t姓名\t学号\t性别\tc语言\t英语\tt总分\n");
+					printf("\t%s\t%ld\t%s\t%d\t%d\t%d\t%d\n", p->date.name, p->date.number, p->date.sex, p->date.math,
+						p->date.eglish, p->date.clanguge, p->date.average);
+					break;
+				}
+				else {
+					p = p->next;
+					if (p == NULL)
+						printf("=>ゃゃゃ你要查的学生不存在ゃゃゃ");
+				}
+			}
+			break;
+		case 3: printf("=>请输入查找学号:\n");
+			scanf("%ld", &m);
+			fflush(stdin);
+			p = head->next;
+			while (p) {
+				if (p->date.number == m) {
+					printf("\t姓名\t学号\t性别\t c语言\t英语\t高数\t总分\n");
+					printf("\t%s\t%ld\t%s\t%d\t%d\t%d\t%d\n", p->date.name, p->date.number, p->date.sex, p->date.math,
+						p->date.eglish, p->date.clanguge, p->date.average);
+					break;
+				}
+				else {
+					p = p->next;
+					if (p == NULL)
+						printf("=>ゃゃゃ你要查的学生不存在ゃゃゃ\n");
+				}
+			}
+			break;
+		case 4:n = 1;
+			break;
+		}
+	}
+	return 1;
+}
+int range(Y *head)//排序 
+{
+	Y *p = head, *q = head->next;
+	int n, i, m = head->date.number;
+	printf("ゃゃゃゃゃゃゃゃゃゃゃゃゃゃゃゃゃゃゃゃゃゃ\n");
+	printf("ゃEric          1 按学号排序          Ericゃ\n");
+	printf("ゃEric          2 按成绩排序          Ericゃ\n");
+	printf("ゃゃゃゃゃゃゃゃゃゃゃゃゃゃゃゃゃゃゃゃゃゃ\n");
+	printf("=>请选择操作：\n》");
+	scanf("%d", &n);
+	fflush(stdin);
+	if (q == NULL) {
+		printf("=>ゃゃゃ无学生可排序ゃゃゃ\n");
+		return 0;
+	}
+	switch (n) {
+	case 2:for (i = 0;i<m;i++)//按成绩排序           
+	{
+		p = head;q = head->next;
+		while (q->next) {
+			if ((q->date.average)<(q->next->date.average)) {
+				p->next = q->next;
+				p = p->next;
+				q->next = p->next;
+				p->next = q;
+			}
+			else {
+				p = p->next;q = q->next;
+			}
+		}
+	}
+		   break;
+	case 1:for (i = 0;i <= m;i++)//按学号排序           
+	{
+		p = head;q = head->next;
+		while (q->next) {
+			if ((q->date.number)>(q->next->date.number)) {
+				p->next = q->next;
+				p = p->next;
+				q->next = p->next;
+				p->next = q;
+			}
+			else {
+				p = p->next;q = q->next;
+			}
+		}
+	}
+		   break;
+	}
+	printf("=>ゃゃゃゃ排序成功ゃゃゃゃ\n");
+	return 1;
+}
+void menu() {
+	printf("\nゃゃゃゃゃゃゃゃゃゃゃゃゃゃゃゃゃゃゃゃゃゃ\n");
+	printf("ゃゃゃゃゃゃゃゃゃゃゃゃゃゃゃゃゃゃゃゃゃゃ\n");
+	printf("ゃEric          1 ゃ新建系统ゃ        Ericゃ\n");
+	printf("ゃEric          2 学生信息录入        Ericゃ\n");
+	printf("ゃEric          3 学生信息删除        Ericゃ\n");
+	printf("ゃEric          4 学生信息查看        Ericゃ\n");
+	printf("ゃEric          5 学生信息排序        Ericゃ\n");
+	printf("ゃEric          6 学生信息读取        Ericゃ\n");
+	printf("ゃEric          7 学生信息保存        Ericゃ\n");
+	printf("ゃEric          8 ゃ退出系统ゃ        Ericゃ\n");
+	printf("ゃゃゃゃゃゃゃゃゃゃゃゃゃゃゃゃゃゃゃゃゃゃ\n");
+	printf("=>请选择你的操作：\n");
+}
+int save(Y *head)//保存 
+{
+	FILE *fp;   Y *p;
+	p = head;
+	if ((fp = fopen("f:\\学生管理系统", "wb+")) == NULL) {
+		printf("=>保存失败！");
+		return 0;
+	}
+	while (p) {
+		fwrite(&(p->date), sizeof(student), 1, fp);
+		p = p->next;
+	}
+	printf("=>保存成功！");
+	fclose(fp);
+	return 1;
+}
+Y* read()//读入系统学生信息 
+{
+	int i;
+	Y *p, *q, *head;
+	FILE *fp;
+	if ((head = (Y*)malloc(sizeof(Y))) == NULL) {
+		printf("=>开辟空间失败！");
+		exit(1);
+	}
+	else {
+		head->next = NULL;
+		head->date.number = 0;//头结点存放学生人数   
+	}
+	q = head;
+	if ((fp = fopen("f:\\学生管理系统", "rb")) == NULL) {
+		printf("=>系统无学生！\n");
+		return 0;
+	}
+	fread(&(q->date), sizeof(student), 1, fp);
+	for (i = 0;i<head->date.number;i++) {
+		if ((p = (Y*)malloc(sizeof(Y))) == NULL) {
+			printf("=>读值失败！");
+			exit(1);
+		}
+		fread(&(p->date), sizeof(student), 1, fp);
+		p->next = q->next;
+		q->next = p;
+	}
+	fclose(fp);
+	return head;
+}
+int main() {
+	int m = 0, n, i;      Y *head;
+	char password[8];//用户的输入
+	static char key[] = "123456";
+	char yonghu[10];
+	static char yonghuming[10] = "welcome";
+	int count = 0;//记录用户输入的次数 
+	int flag = 0; //记录成功或是失败 
+				  //验证用户的密码，如果三次错误，则不允许进入
+	do
+	{
+		printf("请输入用户名：");
+		gets(yonghu);
+		printf("请输入密码：");
+		gets(password);
+		if (strcmp(password, key) == 0 && strcmp(yonghu, yonghuming) == 0)
+			flag = 1;
+		else
+		{
+			flag = 0;
+			count++;
+		}
+	} while (count<3 && flag == 0);
+	if (count == 3) {
+		exit(1);
+	}
+	if ((head = read()) == 0) {
+		printf("=>是否新建系统？\n");
+		printf("\t\t\t是（1）\t\t否（2）\n");
+		scanf("%d", &i);
+		fflush(stdin);
+		if (i == 1)
+			head = build();
+		else if (i == 2)
+			exit(1);
+	}
+	else
+		printf("=>信息导入成功！");
+	while (m == 0) {
+		menu();
+		scanf("%d", &n);
+		fflush(stdin);
+		switch (n) {
+		case 1: head = build();
+			break;
+		case 2:add(head);
+			break;
+		case 3:deletion(head);
+			break;
+		case 4:display(head);
+			break;
+		case 5: range(head);
+			break;
+		case 6:head = read();
+			if (head != 0)
+				printf("=>ゃゃゃゃゃゃ读取信息成功ゃゃゃゃゃゃ\n");
+			break;
+		case 7:save(head);
+			break;
+		case 8:m = 1;
+			break;
+		}
+	}
+}
